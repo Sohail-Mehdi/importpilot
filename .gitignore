@@ -1,0 +1,223 @@
+###############################################################################
+# ImportPilot — .gitignore
+# Scope: monorepo root — rules cascade into all sub-directories
+# Policy: never commit credentials, secrets, build artifacts, or runtime data
+###############################################################################
+
+# ---------------------------------------------------------------------------
+# SECRETS & CREDENTIALS — ABSOLUTE HARD BLOCK
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+*.csr
+id_rsa
+id_ed25519
+id_ecdsa
+id_dsa
+*.ppk
+.secrets
+secrets/
+credentials/
+*.credentials
+auth.json
+service-account*.json
+gcp-*.json
+aws-credentials
+.aws/credentials
+
+# ---------------------------------------------------------------------------
+# LOCAL MACHINE / DEVELOPER STATE — NEVER PUBLISHED
+# ---------------------------------------------------------------------------
+/.local/
+.local/
+.personal/
+*.local.md
+*.private.md
+bootstrap-audit*.md
+
+# ---------------------------------------------------------------------------
+# PHP / LARAVEL (apps/control-plane, packages/laravel-sdk)
+# ---------------------------------------------------------------------------
+vendor/
+composer.phar
+*.cache
+bootstrap/cache/
+storage/logs/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+storage/app/public/
+storage/app/uploads/
+storage/app/imports/
+storage/app/parquet/
+storage/app/exports/
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+laravel.log
+
+# ---------------------------------------------------------------------------
+# PYTHON / DATA ENGINE (apps/data-engine, packages/python-sdk)
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+venv/
+env/
+.python-version
+
+# Parquet and Arrow runtime artifacts (never commit generated data)
+*.parquet
+*.arrow
+*.feather
+
+# ---------------------------------------------------------------------------
+# NODE / JAVASCRIPT / TYPESCRIPT (apps/importer-web, packages/schema-spec)
+# ---------------------------------------------------------------------------
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+dist/
+build/
+.next/
+.nuxt/
+.output/
+*.local
+.cache/
+.parcel-cache/
+.turbo/
+*.tsbuildinfo
+
+# ---------------------------------------------------------------------------
+# UPLOADED / CUSTOMER DATA — ABSOLUTE HARD BLOCK
+# ---------------------------------------------------------------------------
+*.csv
+*.xlsx
+*.xls
+*.xlsm
+*.ods
+*.tsv
+uploads/
+imports/
+fixtures/generated/
+test-data/large/
+benchmarks/data/
+
+# ---------------------------------------------------------------------------
+# DOCKER / INFRASTRUCTURE RUNTIME
+# ---------------------------------------------------------------------------
+infra/docker/data/
+infra/docker/volumes/
+.docker/
+docker-compose.override.yml
+!docker-compose.override.yml.example
+
+# ---------------------------------------------------------------------------
+# LOCAL OBJECT STORAGE EMULATOR STATE
+# ---------------------------------------------------------------------------
+.localstack/
+localstack-data/
+minio-data/
+garage-data/
+s3-data/
+
+# ---------------------------------------------------------------------------
+# DATABASE FILES
+# ---------------------------------------------------------------------------
+*.sqlite
+*.sqlite3
+*.db
+*.sql.gz
+database/dumps/
+
+# ---------------------------------------------------------------------------
+# LOG FILES
+# ---------------------------------------------------------------------------
+*.log
+*.log.*
+logs/
+
+# ---------------------------------------------------------------------------
+# TEST RUNTIME & COVERAGE
+# ---------------------------------------------------------------------------
+.phpunit.result.cache
+.phpunit.cache/
+coverage/
+test-results/
+playwright-report/
+playwright/.auth/
+test-output/
+
+# ---------------------------------------------------------------------------
+# BUILD ARTIFACTS & CI OUTPUTS
+# ---------------------------------------------------------------------------
+*.zip
+*.tar.gz
+*.tar.bz2
+release/
+artifacts/
+
+# ---------------------------------------------------------------------------
+# IDE / EDITOR FILES
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/settings.json
+.vscode/launch.json
+.vscode/.ropeproject
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Keep shared editor config
+!.vscode/extensions.json
+!.vscode/tasks.json
+
+# ---------------------------------------------------------------------------
+# OS FILES
+# ---------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ---------------------------------------------------------------------------
+# TEMPORARY / SCRATCH
+# ---------------------------------------------------------------------------
+tmp/
+temp/
+scratch/
+*.tmp
+*.bak
+*.orig
+*.rej

@@ -1,0 +1,44 @@
+# GitHub Actions — Phase 0 CI Placeholder
+#
+# This workflow is a structural placeholder.
+# It will be populated with real CI steps during Phase 1 when
+# application code exists to test.
+#
+# Intended future jobs:
+#   - control-plane: PHP lint (Pint), PHPStan, Pest tests
+#   - data-engine:   Ruff lint, Mypy type-check, Pytest
+#   - importer-web:  TypeScript compile, ESLint, Vitest, Playwright E2E
+#   - security:      Dependency audit, secret scanning verification
+#
+# Version pinning policy:
+#   - Runner: ubuntu-24.04 (pinned, not ubuntu-latest)
+#   - Action versions: @vN tags (SHA pinning for security-sensitive steps in future)
+
+name: CI
+
+on:
+  push:
+    branches: [main, "phase/*", "feat/*", "fix/*"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  placeholder:
+    name: "Phase 0 — Structure Only"
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify repository structure
+        run: |
+          echo "Repository structure check — Phase 0 bootstrap"
+          test -f .gitignore     && echo "✓ .gitignore present"     || (echo "✗ .gitignore missing" && exit 1)
+          test -f .editorconfig  && echo "✓ .editorconfig present"  || (echo "✗ .editorconfig missing" && exit 1)
+          test -f README.md      && echo "✓ README.md present"      || (echo "✗ README.md missing" && exit 1)
+          test -f SECURITY.md    && echo "✓ SECURITY.md present"    || (echo "✗ SECURITY.md missing" && exit 1)
+          test -d apps           && echo "✓ apps/ present"          || (echo "✗ apps/ missing" && exit 1)
+          test -d packages       && echo "✓ packages/ present"      || (echo "✗ packages/ missing" && exit 1)
+          test -d infra          && echo "✓ infra/ present"         || (echo "✗ infra/ missing" && exit 1)
+          test -d docs           && echo "✓ docs/ present"          || (echo "✗ docs/ missing" && exit 1)
+          echo "Phase 0 structure verification complete."
