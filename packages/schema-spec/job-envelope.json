@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Job Envelope",
+  "type": "object",
+  "properties": {
+    "contract_version": { "type": "string" },
+    "job_id": { "type": "string", "format": "uuid" },
+    "import_id": { "type": "string", "format": "uuid" },
+    "organization_id": { "type": "string", "format": "uuid" },
+    "project_id": { "type": "string", "format": "uuid" },
+    "operation": { "type": "string", "enum": ["inspect", "profile", "map", "validate", "finalize"] },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "idempotency_key": { "type": "string" },
+    "correlation_id": { "type": "string" },
+    "requested_at": { "type": "string", "format": "date-time" },
+    "engine_version_requirement": { "type": "string" },
+    "input_artifacts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "configuration_snapshot": { "type": "object" }
+  },
+  "required": ["contract_version", "job_id", "import_id", "organization_id", "operation", "attempt", "idempotency_key", "requested_at"]
+}
