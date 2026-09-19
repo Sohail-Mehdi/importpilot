@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Map Request",
+  "type": "object",
+  "properties": {
+    "job_id": { "type": "string", "format": "uuid" },
+    "import_id": { "type": "string", "format": "uuid" },
+    "schema_id": { "type": "string", "format": "uuid" },
+    "source_columns": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "target_schema_snapshot": { "type": "object" },
+    "historical_mappings": { "type": "object" }
+  },
+  "required": ["job_id", "import_id", "schema_id", "source_columns", "target_schema_snapshot"]
+}
