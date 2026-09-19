@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Inspect Result",
+  "type": "object",
+  "properties": {
+    "file_type": { "type": "string", "enum": ["csv", "tsv", "xlsx"] },
+    "encoding": { "type": "string" },
+    "has_headers": { "type": "boolean" },
+    "headers": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "delimiter": { "type": "string" },
+    "row_count": { "type": "integer", "minimum": 0 },
+    "size_bytes": { "type": "integer", "minimum": 0 },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["file_type", "encoding", "has_headers", "headers", "row_count", "size_bytes"]
+}
