@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| **Status** | Draft |
+| **Status** | Accepted |
 | **Date** | 2026-09-17 |
 | **Author** | Architecture Team |
 
