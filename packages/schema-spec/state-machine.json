@@ -1,0 +1,46 @@
+{
+  "name": "ImportPilot State Machine",
+  "version": "1.0",
+  "owner": "Laravel Control Plane",
+  "description": "Defines the authoritative import lifecycle states.",
+  "states": [
+    "CREATED",
+    "UPLOADING",
+    "UPLOADED",
+    "INSPECTING",
+    "AWAITING_MAPPING",
+    "VALIDATING",
+    "NEEDS_CORRECTION",
+    "READY_FOR_DRY_RUN",
+    "DRY_RUN_READY",
+    "FINALIZING",
+    "COMPLETED",
+    "RETRYING",
+    "FAILED",
+    "CANCELLED"
+  ],
+  "terminal_states": ["COMPLETED", "FAILED", "CANCELLED"],
+  "transitions": [
+    {"from": "CREATED", "to": "UPLOADING", "trigger": "signed_url_requested"},
+    {"from": "CREATED", "to": "UPLOADED", "trigger": "upload_success"},
+    {"from": "UPLOADING", "to": "UPLOADED", "trigger": "upload_success"},
+    {"from": "UPLOADED", "to": "INSPECTING", "trigger": "dispatch_inspection"},
+    {"from": "INSPECTING", "to": "AWAITING_MAPPING", "trigger": "inspection_success"},
+    {"from": "AWAITING_MAPPING", "to": "VALIDATING", "trigger": "mapping_confirmed"},
+    {"from": "VALIDATING", "to": "NEEDS_CORRECTION", "trigger": "validation_issues_found"},
+    {"from": "VALIDATING", "to": "READY_FOR_DRY_RUN", "trigger": "validation_clean"},
+    {"from": "NEEDS_CORRECTION", "to": "VALIDATING", "trigger": "corrections_applied"},
+    {"from": "NEEDS_CORRECTION", "to": "READY_FOR_DRY_RUN", "trigger": "force_proceed_with_warnings"},
+    {"from": "READY_FOR_DRY_RUN", "to": "DRY_RUN_READY", "trigger": "dry_run_success"},
+    {"from": "DRY_RUN_READY", "to": "FINALIZING", "trigger": "user_finalizes"},
+    {"from": "FINALIZING", "to": "COMPLETED", "trigger": "finalization_success"}
+  ],
+  "global_transitions": [
+    {"to": "FAILED", "trigger": "system_error"},
+    {"to": "CANCELLED", "trigger": "user_cancel"},
+    {"to": "RETRYING", "trigger": "transient_error"}
+  ],
+  "idempotency_rules": {
+    "finalization": "Finalize requests with the same idempotency_key must return the existing final artifact if already COMPLETED."
+  }
+}
