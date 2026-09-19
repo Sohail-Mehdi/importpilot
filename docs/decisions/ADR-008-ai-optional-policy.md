@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| **Status** | Draft — Policy Direction Set |
+| **Status** | Accepted |
 | **Date** | 2026-09-17 |
 | **Author** | Architecture Team |
 
