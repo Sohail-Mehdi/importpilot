@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Profile Result",
+  "type": "object",
+  "properties": {
+    "columns": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "inferred_type": { "type": "string", "enum": ["string", "integer", "float", "boolean", "date", "datetime"] },
+          "null_count": { "type": "integer" },
+          "unique_count": { "type": "integer" },
+          "sample_values": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "min_length": { "type": "integer" },
+          "max_length": { "type": "integer" }
+        },
+        "required": ["inferred_type", "null_count", "unique_count", "sample_values"]
+      }
+    }
+  },
+  "required": ["columns"]
+}
