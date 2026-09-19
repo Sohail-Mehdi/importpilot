@@ -118,6 +118,10 @@ build/
 *.xlsm
 *.ods
 *.tsv
+
+!packages/test-fixtures/*.csv
+!packages/test-fixtures/*.tsv
+!packages/test-fixtures/*.xlsx
 uploads/
 imports/
 fixtures/generated/
@@ -221,3 +225,4 @@ scratch/
 *.bak
 *.orig
 *.rej
+master_spec.txt
