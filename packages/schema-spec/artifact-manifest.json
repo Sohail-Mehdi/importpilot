@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Artifact Manifest",
+  "type": "object",
+  "properties": {
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["source", "parquet_clean", "parquet_error", "mapping_rules"] },
+          "s3_key": { "type": "string" },
+          "size_bytes": { "type": "integer" },
+          "sha256": { "type": "string" }
+        },
+        "required": ["type", "s3_key", "size_bytes"]
+      }
+    }
+  },
+  "required": ["artifacts"]
+}
