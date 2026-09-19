@@ -3,261 +3,229 @@
 This document records all proposed or approved deviations from the locked
 ImportPilot Master Project Specification (LOCKED v1.0, 17 September 2026).
 
-No unapproved change may enter production code.
-
-Changes are recorded in the order they are identified.
+**Policy:** No unapproved change may enter production code or committed
+architecture. Changes are recorded in discovery order with full evidence.
 
 ---
 
 ## CHANGE-001 — Repository Visibility: Private → Public
 
 ```
-Current locked decision:  Repository remains private during development / pre-beta.
-Problem:                  User has explicitly requested the repository to be created
-                          as public during the bootstrap phase to enable open
-                          development visibility.
+Current locked decision:  Repository remains private during development/pre-beta.
+Problem:                  User explicitly requested public visibility during bootstrap.
 Evidence:                 User explicit approval — Prompt 01, Section 1.
 Alternatives:
   A. Keep private (locked default) — rejected by user.
-  B. Create as public immediately — approved by user.
-Recommended decision:     Create as public (B).
-Security impact:          LOW if .gitignore and hygiene are correct. The repository
-                          must NEVER contain credentials, secrets, customer data,
-                          private keys, deployment credentials, or the full private
-                          Master Project Specification. Git history is permanently
-                          public. Making the repository private later does NOT erase
-                          data that has already been cloned, cached, or mirrored.
+  B. Create as public immediately — approved.
+Recommended decision:     Public (B).
+Security impact:          LOW if .gitignore hygiene is correct. Git history is
+                          permanently public. Private-later does NOT erase cached
+                          clones/forks.
 Compatibility impact:     None.
-Performance impact:       None.
-Operations impact:        Public visibility increases scrutiny of committed code.
-                          This is a net positive for quality.
-Migration impact:         None — this is the initial creation.
-User approval required:   Already approved.
+Operations impact:        Public scrutiny improves quality.
+Migration impact:         None — initial creation.
+User approval required:   ALREADY APPROVED.
 Status:                   APPROVED — 2026-09-17
 ```
 
 ---
 
-## CHANGE-002 — Laravel Version: 12 → 13
+## CHANGE-002 — SUPERSEDED / CORRECTED (Prompt 02)
+
+> **This change proposal was incorrect and is superseded.**
+> The locked specification ALREADY requires Laravel 13.x.
+> There is no baseline Laravel 12 for this project.
+> Laravel 13 is the locked version — not a proposed upgrade.
+> This change entry is retained for audit continuity.
 
 ```
-Current locked decision:  Specification references Laravel (implied latest stable
-                          at time of spec writing). Assumed Laravel 12 at spec date
-                          of September 2026 if not explicitly stated.
-Problem:                  Laravel 12's active support (bug fixes) ended August 13,
-                          2026. Only security fixes remain until February 2027.
-                          Laravel 13 was released March 17, 2026 and is the current
-                          actively supported major version.
-Evidence:
-  - laravel.com release schedule (September 2026)
-  - Laravel 12 end-of-active-support: August 13, 2026
-  - Laravel 13 minimum PHP: 8.3 (machine has PHP 8.4.25 — compatible)
-Alternatives:
-  A. Use Laravel 12 (locked baseline) — receives security fixes only through
-     Feb 2027. Acceptable but accumulates technical debt from day one.
-  B. Use Laravel 13 (current actively supported) — full bug fix support
-     through Q3 2027, security through Q1 2028.
-Recommended decision:     Laravel 13 (B).
-Security impact:          POSITIVE — Laravel 13 receives active security patches.
-                          Laravel 12 security-only window starts a long-lived
-                          project on a declining support curve.
-Compatibility impact:     PHP 8.3 minimum (met: machine has PHP 8.4.25).
-                          Laravel 13 breaking changes vs 12 must be reviewed
-                          during app scaffolding.
-Performance impact:       Laravel 13 includes performance improvements.
-Operations impact:        None.
-Migration impact:         N/A — no application code exists yet.
-User approval required:   YES — requires user sign-off before app scaffolding.
-Status:                   PROPOSED — awaiting user approval
+Original (incorrect) description: Laravel 12 → Laravel 13 migration
+Correct statement:               Laravel 13.x is the locked specification baseline.
+                                 Released March 17 2026. Active support through
+                                 Q3 2027. Security support through Q1 2028.
+                                 PHP 8.4.25 (installed) meets minimum PHP 8.3.
+Status:                          SUPERSEDED — Laravel 13 is LOCKED, not proposed.
 ```
 
 ---
 
-## CHANGE-003 — Object Storage: MinIO → LocalStack (local development only)
+## CHANGE-003 — Local S3 Storage: MinIO → SeaweedFS
 
 ```
-Current locked decision:  Specification uses MinIO as the local-development
-                          S3-compatible object storage server.
-Problem:                  MinIO community edition has moved to a source-only
-                          distribution model (2025-2026), removing pre-compiled
-                          binaries and changing Docker image availability for the
-                          community edition. This makes reliable Docker-based
-                          local development with MinIO significantly more complex.
+Current locked decision:  Original spec referenced MinIO as local-dev S3 storage.
+                          Prompt 01 proposed LocalStack as replacement.
+Problem:
+  MinIO CE: No longer provides pre-compiled binaries (2025-2026 distribution change).
+  LocalStack: Current releases require an authenticated account/token to run,
+              creating an external dependency and account concern for a commercial
+              project that must not depend on external services for local development.
 Evidence:
-  - Multiple community reports (GitHub, HN, 2025-2026) documenting MinIO's
-    community edition distribution change.
-  - MinIO now requires building from source or using a commercial image
-    for the full feature set in the community tier.
+  - MinIO community binary distribution changes: multiple community reports (2025-2026).
+  - LocalStack auth requirement: verified from localstack.cloud documentation.
+  - SeaweedFS: actively maintained, MIT licensed, Docker-native, full S3 API support
+    including presigned URLs, multipart upload, CORS, bucket operations.
+    No external authentication required for local development.
 Alternatives:
-  A. Continue with MinIO — requires building from source or navigating
-     changed image distribution. Acceptable but adds friction.
-  B. LocalStack community edition — actively maintained, Docker-native,
-     industry-standard AWS service emulation including S3, presigned URLs.
-     Well-documented. Does not require external accounts for S3-only use.
-  C. Garage — Rust-based, lightweight S3 server. Excellent for self-hosted
-     but less documentation for Docker-Compose dev workflows.
-Recommended decision:     LocalStack community edition (B) for local development.
-                          Production object storage remains vendor-agnostic
-                          (S3-compatible managed service). The application
-                          abstraction layer (Flysystem / boto3) is unchanged.
-Security impact:          No change — credentials remain in .env, never committed.
-Compatibility impact:     LocalStack implements the S3 API surface required
-                          (PutObject, GetObject, DeleteObject, presigned URLs,
-                          bucket operations). Must verify specific features
-                          needed (multipart upload, if required) before Phase 1.
-Performance impact:       None for local development.
-Operations impact:        LocalStack requires a Docker container in Compose.
-                          Simpler than building MinIO from source.
-Migration impact:         None — no storage code exists yet. Environment variable
-                          pointing to S3 endpoint URL changes from MinIO port
-                          to LocalStack port. Application code is unaffected.
-User approval required:   YES — requires user sign-off before Compose definition.
-Status:                   PROPOSED — awaiting user approval
+  A. MinIO (original) — distribution model changed, complex to set up.
+  B. LocalStack — requires external account/token (unacceptable dependency).
+  C. SeaweedFS (recommended) — maintained, self-contained, MIT, full S3 surface.
+  D. Garage — Rust-based, lightweight, actively maintained. Good alternative but
+     less ecosystem documentation for Docker Compose dev workflows than SeaweedFS.
+Recommended decision:     SeaweedFS (C) for local development S3.
+                          Production storage remains abstract S3-compatible.
+Security impact:          SeaweedFS runs locally, no external accounts needed.
+                          Credentials remain in .env, never committed.
+Compatibility impact:     boto3 and Flysystem S3 work with SeaweedFS S3 endpoint.
+                          Path-style addressing required (not virtual-hosted).
+Operations impact:        One Docker container, one config file. Simple.
+Migration impact:         None — no storage code written yet.
+User approval required:   YES — PROPOSED, awaiting user approval.
+Status:                   PROPOSED — 2026-09-17
 ```
 
 ---
 
-## CHANGE-004 — Message Broker: Redis-only → RabbitMQ as primary broker (Celery)
+## CHANGE-004 — Celery Broker: Redis → RabbitMQ (as primary)
 
 ```
-Current locked decision:  Specification uses Redis as the Celery broker.
-Problem:                  ImportPilot will execute long-running Celery tasks:
-                          XLSX parsing, large CSV processing, profiling,
-                          validation, Parquet generation, and duplicate analysis.
-                          Redis as a Celery broker uses a visibility_timeout
-                          mechanism. If a task exceeds the configured
-                          visibility_timeout, Redis assumes the worker crashed
-                          and redelivers the task to another worker. This causes
-                          duplicate task execution for long-running jobs unless
-                          visibility_timeout is tuned to exceed the maximum
-                          possible task duration — which in turn delays recovery
-                          from genuine worker crashes.
+Current locked decision:  Celery + Redis broker.
+Problem:                  Long-running ImportPilot jobs (XLSX parsing, Parquet
+                          generation, validation, duplicate analysis) exceed Redis
+                          broker's visibility_timeout window, causing duplicate
+                          task execution when a worker is slow but not crashed.
 Evidence:
-  - Celery documentation: visibility_timeout risk for long-running tasks.
-  - Research comparison (September 2026): RabbitMQ provides native AMQP
-    acknowledgement semantics — a message stays in flight until the worker
-    explicitly ACKs. No visibility timeout problem.
-  - Industry consensus: RabbitMQ is the recommended broker for
-    business-critical, long-running Celery workloads.
+  - Celery docs: visibility_timeout must exceed longest task duration.
+  - Research comparison: RabbitMQ AMQP provides true per-message ACK; message
+    stays in-flight until worker explicitly ACKs. No timeout-based redelivery.
+  - Redis 8.2 retained for: Laravel cache, Horizon queue monitoring, session
+    backend where applicable.
 Alternatives:
-  A. Redis only (locked baseline) — requires careful visibility_timeout
-     tuning. Risk of duplicate task execution if a task exceeds timeout.
-     Simpler operationally (one fewer service).
-  B. RabbitMQ as primary Celery broker — native AMQP delivery guarantees,
-     no visibility timeout problem, better suited for long-running tasks,
-     supports task routing to priority queues. Adds RabbitMQ to the
-     infrastructure stack.
-  C. Redis + explicit idempotency guards — keep Redis but implement
-     task-level idempotency so duplicates are safe. Still requires careful
-     visibility_timeout. Adds development burden.
-Recommended decision:     RabbitMQ as primary Celery broker (B).
-                          Redis is retained for Laravel cache, Laravel sessions,
-                          and potentially Celery result backend.
-Security impact:          RabbitMQ requires credentials (user/password).
-                          These must be environment-variable-driven. Never
-                          hardcoded in committed Compose files.
-Compatibility impact:     Celery supports RabbitMQ natively via amqp/kombu.
-                          No Python code change required at the broker-
-                          configuration level.
-Performance impact:       RabbitMQ adds minor latency vs Redis for task dispatch,
-                          negligible for long-running tasks where dispatch
-                          latency is irrelevant.
-Operations impact:        RabbitMQ adds one additional service to Compose.
-                          RabbitMQ Management UI (port 15672) provides
-                          built-in queue observability — a significant
-                          operational advantage over Redis for debugging.
-Migration impact:         N/A — no worker code exists yet.
-User approval required:   YES — requires user sign-off before Compose definition.
-Status:                   PROPOSED — awaiting user approval
+  A. Redis only — requires visibility_timeout >> max task duration. If a
+     worker genuinely crashes, recovery is delayed by the inflated timeout.
+     Risk of duplicate execution for long-running tasks.
+  B. RabbitMQ as Celery broker — native AMQP ACK semantics, no visibility
+     timeout problem. Adds one service. Queue routing for priority lanes.
+  C. Redis + mandatory idempotency guards everywhere — acceptable but adds
+     significant development burden without solving the fundamental timeout
+     problem.
+Recommended decision:     RabbitMQ as Celery broker (B). Redis retained for
+                          Laravel infrastructure. See ADR-009 for full analysis.
+Security impact:          RabbitMQ requires credentials. Environment-variable
+                          driven. Non-default vhost and credentials required.
+Compatibility impact:     Celery supports RabbitMQ natively. No Python changes.
+Operations impact:        +1 Docker service. Management UI provides observability.
+Migration impact:         None — no worker code exists yet.
+User approval required:   YES — PROPOSED, awaiting user approval.
+Status:                   PROPOSED — 2026-09-17
 ```
 
 ---
 
-## CHANGE-005 — Node.js Version: Unspecified → Node.js 24 LTS
+## CHANGE-005 — Node.js: System Node 26 → Project Node 24 LTS
 
 ```
-Current locked decision:  Specification requires an appropriate Node LTS.
-                          Machine has Node.js 26.8.1 (non-LTS Current).
-Problem:                  Node.js 26 is currently the "Current" release channel,
-                          not yet LTS (scheduled for October 2026 LTS transition).
-                          Node.js 24 is the current Active LTS.
-                          Node.js 22 is also Active LTS but older.
+Current locked decision:  Spec requires appropriate LTS. Machine has Node 26.8.1.
+Problem:                  Node 26 is Current release channel — not yet LTS
+                          as of 2026-09-17. Node 24 is Active LTS.
 Evidence:
-  - nodejs.org release schedule (September 2026): Node 24 = Active LTS,
-    Node 26 = Current (not yet LTS as of 2026-09-17).
+  - nodejs.org release schedule: Node 24 = Active LTS (Sep 2026).
+  - Node 26 LTS transition scheduled October 2026.
 Alternatives:
-  A. Use system Node 26.8.1 (installed) — not yet LTS as of this date.
-     Will become LTS in October 2026. Acceptable risk for dev-only,
-     but not the recommended production baseline.
-  B. Use Node 24 LTS via nvm/volta — the stable Active LTS choice.
-  C. Use Node 22 LTS — older Active LTS, also valid but nearing end of
-     its active window relative to 24.
-Recommended decision:     Pin to Node.js 24 LTS (B) for the importer-web
-                          package.json engines field and Docker image.
-                          The developer may use nvm to switch locally.
-                          Node 26 may be reconsidered after it reaches LTS
-                          in October 2026.
-Security impact:          Node 24 LTS receives security patches. Using a
-                          non-LTS Current build in production is inadvisable.
-Compatibility impact:     All frontend tooling (Vite, TypeScript, pnpm)
-                          is compatible with Node 24.
-Performance impact:       Negligible difference for build tooling.
-Operations impact:        Docker images will pin to Node 24. nvm/.nvmrc
-                          will specify 24.x for developers.
-Migration impact:         N/A — no frontend code exists yet.
-User approval required:   YES — requires user sign-off before node version pinning.
-Status:                   PROPOSED — awaiting user approval
+  A. System Node 26.8.1 — not LTS yet. Becomes LTS Oct 2026.
+  B. Node 24 LTS — active LTS, recommended for production.
+  C. Node 22 LTS — older active LTS.
+Recommended decision:     Pin project to Node 24 LTS (B) via .nvmrc.
+                          DO NOT remove user's system Node 26.
+Security impact:          Node 24 receives active security patches.
+Compatibility impact:     All frontend tooling (Vite, TypeScript, pnpm) compat.
+Migration impact:         None — no frontend code written yet.
+User approval required:   YES — PROPOSED, awaiting user approval.
+Status:                   PROPOSED — 2026-09-17
 ```
 
 ---
 
-## CHANGE-006 — PHP Extension Gap: pdo_pgsql Not Installed
+## CHANGE-006 — PHP Extension: pdo_pgsql Not Installed
 
 ```
-Current locked decision:  PostgreSQL is the primary database. Laravel's PDO
-                          driver for PostgreSQL (pdo_pgsql) is required.
-Problem:                  Machine has PHP 8.4.25 but pdo_pgsql / pgsql extensions
-                          are NOT installed. apt-cache confirms the package
-                          php8.4-pgsql is available but not installed.
+Current locked decision:  PostgreSQL is primary database. pdo_pgsql required.
+Problem:                  php8.4-pgsql package is NOT installed on host.
 Evidence:
-  - php -m output: pdo_mysql and pdo_sqlite present; pdo_pgsql absent.
-  - apt-cache search php8.4-pgsql: package exists in repository.
-Action required:          Install php8.4-pgsql before Laravel scaffolding.
-                          Command: sudo apt-get install -y php8.4-pgsql
-                          This is a SAFE, non-destructive installation.
-                          No existing PHP configuration is altered.
-Alternatives:
-  A. Install php8.4-pgsql (recommended).
-  B. Use only Docker-based PHP for database work (avoids host install but
-     complicates artisan commands run on host).
-Recommended decision:     Install php8.4-pgsql on host (A) for full local
-                          artisan/migration workflow.
-Security impact:          None.
-Compatibility impact:     Required for Laravel PostgreSQL connection.
-Performance impact:       None.
-Operations impact:        Must be installed before Phase 1 app scaffolding.
-Migration impact:         N/A.
-User approval required:   INFORMATIONAL — this is a missing prerequisite,
-                          not an architectural change. Flagged for user awareness.
-Status:                   IDENTIFIED — to be installed before Phase 1
-```
-
----
-
-## CHANGE-007 — pnpm Not Installed
-
-```
-Current locked decision:  Specification implies pnpm for the Node.js workspace.
-Problem:                  pnpm is not installed on the machine.
-                          Node.js 26.8.1 is installed. corepack is not available.
-Evidence:
-  - pnpm --version: command not found.
-  - corepack --version: command not found.
-Action required:          Install pnpm before importer-web scaffolding.
-                          Recommended: npm install -g pnpm
-                          Or: corepack enable && corepack prepare pnpm@latest --activate
-Recommended decision:     Install pnpm via npm install -g pnpm before Phase 1.
-                          This is a SAFE, non-destructive operation.
+  - php -m: pdo_pgsql absent (verified Prompt 01 and Prompt 02).
+  - apt-cache search php8.4-pgsql: package available.
+Action:                   sudo apt-get install -y php8.4-pgsql
+                          SAFE — additive, no existing config altered.
+Note:                     Agent cannot execute sudo commands. User must run.
 User approval required:   INFORMATIONAL — missing prerequisite.
-Status:                   IDENTIFIED — to be installed before Phase 1
+Status:                   IDENTIFIED — USER ACTION REQUIRED before Phase 1.
+```
+
+---
+
+## CHANGE-007 — pnpm Installation
+
+```
+Current locked decision:  pnpm required for frontend workspace.
+Problem:                  pnpm was not installed.
+Action taken:             npm install -g pnpm → pnpm 12.4.2 installed.
+Status:                   RESOLVED — 2026-09-17 (pnpm 12.4.2 active)
+```
+
+---
+
+## CHANGE-008 — PHP Version: 8.4 vs 8.5 Evaluation
+
+```
+Current locked decision:  PHP 8.4.x (machine has 8.4.25).
+Problem:                  PHP 8.5 may offer a longer support horizon.
+                          Laravel 13 supports PHP 8.3+.
+Evidence:
+  - PHP 8.4 EOL: December 2028.
+  - PHP 8.5 (if released in late 2026 per PHP release cadence): would be EOL ~2029.
+  - Not enough active-production evidence for 8.5 at project start.
+Recommended decision:     RETAIN PHP 8.4.x — stable, installed, meets Laravel 13
+                          requirements. Revisit when PHP 8.5 has 6+ months of
+                          production track record and clear ecosystem support.
+User approval required:   INFORMATIONAL — no change proposed now.
+Status:                   DEFERRED — reviewed and rejected for now. Retain 8.4.x.
+```
+
+---
+
+## CHANGE-009 — Redis: 8.0 → 8.2 (EOL Risk)
+
+```
+Current locked decision:  Redis 8.x.
+Problem:                  Redis 8.0 reaches End of Support December 1 2026 —
+                          approximately 11 weeks from project bootstrap. Starting
+                          a production system on an imminently expiring release
+                          violates the project's long-term maintainability policy.
+Evidence:
+  - redis.io release schedule: Redis 8.0 EOS = Dec 1 2026.
+  - Redis 8.2 = Extended release, EOS = September 2030.
+  - Laravel Horizon: fully compatible with Redis 8.2.
+Alternatives:
+  A. Redis 8.0 — expires Dec 2026. Immediate forced upgrade within months.
+  B. Redis 8.2 — Extended release, Sep 2030 EOS. Laravel Horizon compatible.
+Recommended decision:     Redis 8.2 (B). The spec says "Redis 8.x" and 8.2
+                          is correct per the spec's intent. This is a minor
+                          clarification, not a major version change.
+Security impact:          Redis 8.2 receives security patches through 2030.
+Compatibility impact:     8.2 is backward compatible with 8.0 for the
+                          standard data structures ImportPilot uses.
+Operations impact:        None.
+User approval required:   INFORMATIONAL — within the locked "8.x" spec.
+Status:                   ACCEPTED — 2026-09-17 (within locked 8.x range)
+```
+
+---
+
+## CHANGE-010 — Python Project Runtime: 3.12 → 3.13.15
+
+```
+Current locked decision:  Master Specification requires Python 3.13.x.
+System state:             System Python is 3.12.3.
+Resolution:               uv provisions project-isolated Python 3.13.15.
+                          System Python 3.12.3 is NEVER modified.
+Status:                   RESOLVED — Python 3.13.15 installed via uv.
 ```
