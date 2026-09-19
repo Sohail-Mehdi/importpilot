@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Validation Issue",
+  "type": "object",
+  "properties": {
+    "row": { "type": ["integer", "null"] },
+    "field": { "type": ["string", "null"] },
+    "code": { "type": "string" },
+    "severity": { "type": "string", "enum": ["error", "warning", "info"] },
+    "message": { "type": "string" },
+    "raw_value_redacted": { "type": "boolean" },
+    "allowed_actions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "rule_id": { "type": "string" }
+  },
+  "required": ["code", "severity", "message"]
+}
