@@ -1,0 +1,49 @@
+{
+  "edge_case.csv": {
+    "expected_issues": [
+      {
+        "type": "duplicate_header",
+        "columns": [
+          "Name",
+          "Name"
+        ]
+      },
+      {
+        "type": "invalid_email",
+        "row": 1,
+        "value": "invalid-email"
+      },
+      {
+        "type": "duplicate_key",
+        "row": [
+          4,
+          5
+        ],
+        "key": "5"
+      }
+    ],
+    "expected_rows": 6
+  },
+  "edge_case.tsv": {
+    "expected_issues": [
+      {
+        "type": "ambiguous_date",
+        "column": "DateOfBirth"
+      },
+      {
+        "type": "ambiguous_decimal",
+        "column": "Balance"
+      }
+    ],
+    "expected_rows": 3
+  },
+  "edge_case.xlsx": {
+    "expected_issues": [
+      {
+        "type": "formula_ignored",
+        "column": "ComputedScore"
+      }
+    ],
+    "expected_rows": 2
+  }
+}
