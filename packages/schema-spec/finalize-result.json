@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Finalize Result",
+  "type": "object",
+  "properties": {
+    "manifest": { "$ref": "artifact-manifest.json" },
+    "total_rows": { "type": "integer" },
+    "error_rows": { "type": "integer" },
+    "finalized_at": { "type": "string", "format": "date-time" }
+  },
+  "required": ["manifest", "total_rows", "error_rows", "finalized_at"]
+}
