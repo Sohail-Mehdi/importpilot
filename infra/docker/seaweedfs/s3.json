@@ -1,0 +1,20 @@
+{
+  "identities": [
+    {
+      "name": "importpilot-admin",
+      "credentials": [
+        {
+          "accessKey": "importpilot-local",
+          "secretKey": "CHANGE_THIS_IN_LOCAL_ENV"
+        }
+      ],
+      "actions": [
+        "Admin",
+        "Read",
+        "Write",
+        "List",
+        "Tagging"
+      ]
+    }
+  ]
+}
