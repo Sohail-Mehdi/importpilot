@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Mapping Evidence",
+  "type": "object",
+  "properties": {
+    "source_column": { "type": "string" },
+    "target_field": { "type": "string" },
+    "mapping_method": {
+      "type": "string",
+      "enum": ["exact", "normalized", "alias", "historical", "fuzzy", "value_profile"]
+    },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 100 },
+    "evidence": { "type": "string" },
+    "decision_state": {
+      "type": "string",
+      "enum": ["preselected", "suggested", "unresolved", "collision"]
+    },
+    "requires_confirmation": { "type": "boolean" }
+  },
+  "required": ["source_column", "mapping_method", "confidence", "decision_state", "requires_confirmation"]
+}
