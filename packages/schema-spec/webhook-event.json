@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Webhook Event",
+  "type": "object",
+  "properties": {
+    "event_id": { "type": "string", "format": "uuid" },
+    "event_type": { "type": "string", "enum": ["import.created", "import.mapped", "import.validated", "import.completed", "import.failed"] },
+    "project_id": { "type": "string", "format": "uuid" },
+    "import_id": { "type": "string", "format": "uuid" },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "payload": { "type": "object" }
+  },
+  "required": ["event_id", "event_type", "project_id", "import_id", "timestamp", "payload"]
+}
