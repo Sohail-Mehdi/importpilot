@@ -1,0 +1,7 @@
+# SeaweedFS Filer Configuration
+# Minimal configuration for local development
+# Does not persist metadata to external database (uses embedded store)
+
+[leveldb2]
+enabled = true
+dir = "/data/filerldb2"
