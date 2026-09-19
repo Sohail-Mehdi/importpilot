@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ImportPilot Finalize Request",
+  "type": "object",
+  "properties": {
+    "job_id": { "type": "string", "format": "uuid" },
+    "import_id": { "type": "string", "format": "uuid" },
+    "idempotency_key": { "type": "string" },
+    "format": { "type": "string", "enum": ["parquet", "json", "csv"] },
+    "destination": { "type": "object" }
+  },
+  "required": ["job_id", "import_id", "idempotency_key", "format"]
+}
