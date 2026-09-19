@@ -8,7 +8,21 @@ authors = [
 ]
 requires-python = ">=3.13"
 dependencies = [
+    "boto3>=1.43.98",
+    "celery>=5.6.3",
     "fastapi>=0.141.1",
+    "httpx",
+    "openpyxl>=3.1.5",
+    "pandas>=3.0.6",
+    "polars",
+    "pyarrow>=25.0.1",
+    "pydantic>=2.13.5",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-mock",
+    "python-dotenv>=1.2.3",
+    "redis>=8.1.0",
+    "requests",
     "uvicorn>=0.53.0",
 ]
 
