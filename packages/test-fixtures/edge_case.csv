@@ -1,0 +1,8 @@
+﻿ID,Name,Email,Name
+1,Ali Khan,ali@example.com,Active
+2,محمد علی,invalid-email,"Inactive
+Multi-line"
+3,"Jane, Doe",jane@test.com,Pending
+4,NullMarker,NULL,N/A
+5,DupKey,dup@example.com,Active
+5,DupKey,dup2@example.com,Active
