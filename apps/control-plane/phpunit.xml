@@ -32,5 +32,13 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="INTERNAL_TOKEN" value="secret-token"/>
+        <env name="DATA_ENGINE_URL" value="http://127.0.0.1:8001"/>
+        <env name="AWS_ACCESS_KEY_ID" value="somekey"/>
+        <env name="AWS_SECRET_ACCESS_KEY" value="somesecret"/>
+        <env name="AWS_DEFAULT_REGION" value="us-east-1"/>
+        <env name="AWS_BUCKET" value="importpilot-uploads"/>
+        <env name="AWS_ENDPOINT" value="http://127.0.0.1:8333"/>
+        <env name="AWS_USE_PATH_STYLE_ENDPOINT" value="true"/>
     </php>
 </phpunit>

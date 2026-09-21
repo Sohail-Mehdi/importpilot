@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'internal_token' => env('INTERNAL_TOKEN', 'secret-token'),
+    'data_engine_url' => env('DATA_ENGINE_URL', 'http://127.0.0.1:8001'),
+
 ];

@@ -20,7 +20,7 @@ class Phase2Test extends TestCase
         parent::setUp();
         Storage::fake('s3');
         \Illuminate\Support\Facades\Http::fake([
-            'http://127.0.0.1:8001/api/v1/jobs/inspect' => \Illuminate\Support\Facades\Http::response(['status' => 'QUEUED'], 200),
+            'http://127.0.0.1:8001/*' => \Illuminate\Support\Facades\Http::response(['task_id' => 'test-task', 'status' => 'QUEUED'], 200),
             '*' => \Illuminate\Support\Facades\Http::response(['status' => 'ok'], 200)
         ]);
     }
@@ -58,7 +58,7 @@ class Phase2Test extends TestCase
         $compResponse->assertJsonStructure(['id', 'storage_key', 'file_size', 'content_type']);
         
         $this->assertDatabaseHas('source_artifacts', ['import_session_id' => $session->id]);
-        $this->assertEquals('UPLOADED', $session->fresh()->state);
+        $this->assertEquals('INSPECTING', $session->fresh()->state);
         $this->assertEquals('VERIFIED', $attempt->fresh()->status);
         
         $artifactKey = $compResponse->json('storage_key');
@@ -140,5 +140,38 @@ class Phase2Test extends TestCase
         $compResponse = $this->postJson("/api/v1/projects/{$project->id}/sessions/{$session->id}/upload/{$attempt->id}/complete");
         $compResponse->assertStatus(400);
         $this->assertEquals('REJECTED', $attempt->fresh()->status);
+    }
+
+    public function test_reject_xlsx_zip_without_workbook_parts()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $org = Organization::create(['name' => 'Org']);
+        $org->memberships()->create(['user_id' => $user->id, 'role' => 'owner']);
+
+        $project = Project::create(['organization_id' => $org->id, 'name' => 'Proj']);
+        $session = ImportSession::create(['project_id' => $project->id, 'state' => 'CREATED']);
+
+        $attempt = UploadAttempt::create([
+            'import_session_id' => $session->id,
+            'storage_key' => 'fake_xlsx_zip',
+            'status' => 'PENDING',
+            'original_filename' => 'data.xlsx',
+            'expires_at' => now()->addMinutes(15)
+        ]);
+
+        $zipPath = tempnam(sys_get_temp_dir(), 'ziponly');
+        $zip = new \ZipArchive();
+        $zip->open($zipPath, \ZipArchive::OVERWRITE);
+        $zip->addFromString('readme.txt', 'not a spreadsheet');
+        $zip->close();
+        Storage::disk('s3')->put('fake_xlsx_zip', file_get_contents($zipPath));
+        unlink($zipPath);
+
+        $compResponse = $this->postJson("/api/v1/projects/{$project->id}/sessions/{$session->id}/upload/{$attempt->id}/complete");
+        $compResponse->assertStatus(400);
+        $this->assertEquals('REJECTED', $attempt->fresh()->status);
+        $this->assertStringContainsString('structural', $compResponse->json('message'));
     }
 }

@@ -17,7 +17,7 @@ class Phase2IntegrationTest extends TestCase
     {
         parent::setUp();
         \Illuminate\Support\Facades\Http::fake([
-            'http://127.0.0.1:8001/api/v1/jobs/inspect' => \Illuminate\Support\Facades\Http::response(['status' => 'QUEUED'], 200),
+            'http://127.0.0.1:8001/*' => \Illuminate\Support\Facades\Http::response(['task_id' => 'test-task', 'status' => 'QUEUED'], 200),
         ]);
     }
 

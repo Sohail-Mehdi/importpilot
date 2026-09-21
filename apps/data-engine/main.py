@@ -1,7 +1,4 @@
 from fastapi import FastAPI
+from src.api import app as api_app
 
-app = FastAPI(title="ImportPilot Data Engine")
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok", "service": "data-engine"}
+app = api_app
